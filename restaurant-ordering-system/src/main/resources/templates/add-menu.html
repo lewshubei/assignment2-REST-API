@@ -26,6 +26,7 @@
       >
         <input type="hidden" th:field="*{id}" />
         <input type="hidden" th:field="*{imagePath}" />
+        <input type="hidden" th:field="*{category}" id="categoryValue" />
 
         <div class="form-grid">
           <div class="field">
@@ -40,11 +41,22 @@
 
           <div class="field">
             <label>Category</label>
+            <select id="categoryPreset" required>
+              <option value="">Select a category</option>
+              <option value="Malay Food">Malay Food</option>
+              <option value="Chinese Food">Chinese Food</option>
+              <option value="Western Food">Western Food</option>
+              <option value="Japanese Food">Japanese Food</option>
+              <option value="Beverages">Beverages</option>
+              <option value="Desserts">Desserts</option>
+              <option value="Others">Others</option>
+            </select>
             <input
+              id="categoryCustom"
+              class="category-custom"
               type="text"
-              th:field="*{category}"
-              placeholder="Mains, Beverages, Desserts"
-              required
+              placeholder="Type custom category"
+              hidden
             />
           </div>
 
@@ -141,10 +153,54 @@
     </section>
 
     <script>
+      const categoryValue = document.getElementById("categoryValue");
+      const categoryPreset = document.getElementById("categoryPreset");
+      const categoryCustom = document.getElementById("categoryCustom");
       const imageInput = document.getElementById("imageFile");
       const fileName = document.getElementById("imageFileName");
       const preview = document.getElementById("imagePreview");
       const previewImg = document.getElementById("imagePreviewImg");
+
+      const syncCategoryValue = () => {
+        if (categoryPreset.value === "Others") {
+          categoryCustom.hidden = false;
+          categoryCustom.required = true;
+          categoryValue.value = categoryCustom.value.trim();
+          return;
+        }
+
+        categoryCustom.hidden = true;
+        categoryCustom.required = false;
+        categoryValue.value = categoryPreset.value;
+      };
+
+      const initialCategory = categoryValue.value?.trim();
+      const presetOptions = Array.from(categoryPreset.options).map(
+        (option) => option.value,
+      );
+
+      if (initialCategory && presetOptions.includes(initialCategory)) {
+        categoryPreset.value = initialCategory;
+      } else if (initialCategory) {
+        categoryPreset.value = "Others";
+        categoryCustom.value = initialCategory;
+      } else {
+        categoryPreset.value = "";
+      }
+
+      syncCategoryValue();
+
+      categoryPreset.addEventListener("change", () => {
+        if (categoryPreset.value !== "Others") {
+          categoryCustom.value = "";
+        }
+
+        syncCategoryValue();
+      });
+
+      categoryCustom.addEventListener("input", syncCategoryValue);
+
+      categoryCustom.addEventListener("blur", syncCategoryValue);
 
       imageInput?.addEventListener("change", () => {
         const file = imageInput.files?.[0];

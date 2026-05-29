@@ -84,7 +84,7 @@ public class MenuController {
         model.addAttribute("totalSpecialties", menuList.size());
         model.addAttribute("availableCount", availableCount);
         model.addAttribute("soldOutCount", soldOutCount);
-        model.addAttribute("archivedCount", 0);
+
         model.addAttribute("averagePrice", BigDecimal.valueOf(averagePrice));
         model.addAttribute("catalogMatchCount", menuList.size());
 

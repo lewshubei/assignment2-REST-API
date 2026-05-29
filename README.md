@@ -119,19 +119,74 @@ After opening the application, use the menu dashboard to manage the restaurant c
 8. Use the category filter chips or category dropdown to filter menu items.
 9. Use the sort dropdown to order items by name or price.
 
+## Postman API Testing
+
+The project also exposes a REST API for menu items. Use these endpoints in Postman to test the backend in JSON format:
+
+| Method | Endpoint                                    | Purpose                      |
+| ------ | ------------------------------------------- | ---------------------------- |
+| GET    | `http://localhost:8080/api/menu-items`      | Get all menu items           |
+| GET    | `http://localhost:8080/api/menu-items/{id}` | Get one menu item by ID      |
+| POST   | `http://localhost:8080/api/menu-items`      | Create a new menu item       |
+| PUT    | `http://localhost:8080/api/menu-items/{id}` | Update an existing menu item |
+| DELETE | `http://localhost:8080/api/menu-items/{id}` | Delete a menu item           |
+
+### Postman Setup
+
+1. Start the Spring Boot application first.
+2. Open Postman and create a new request.
+3. Select the correct HTTP method.
+4. Enter the URL, for example `http://localhost:8080/api/menu-items`.
+5. For `POST` and `PUT`, set the header `Content-Type: application/json`.
+6. Choose the `Body` tab, select `raw`, and choose `JSON`.
+7. Send the request and check the JSON response.
+
+### Sample JSON Request
+
+Use this body for `POST`:
+
+```json
+{
+  "name": "Chicken Burger",
+  "description": "Grilled chicken burger with fries",
+  "category": "Western Food",
+  "price": 12.5,
+  "availability": "Available",
+  "imagePath": "/uploads/chicken-burger.jpg"
+}
+```
+
+### Sample JSON Response
+
+Example response from `GET /api/menu-items` or `POST /api/menu-items`:
+
+```json
+{
+  "id": 1,
+  "name": "Chicken Burger",
+  "description": "Grilled chicken burger with fries",
+  "category": "Western Food",
+  "price": 12.5,
+  "availability": "Available",
+  "imagePath": "/uploads/chicken-burger.jpg"
+}
+```
+
+If a required field is missing, the API returns a JSON error message with status `400 Bad Request`.
+
 ## Database Schema
 
 The application uses one main table named `menu_items`.
 
-| Column | Type | Purpose |
-| --- | --- | --- |
-| `id` | bigint | Primary key for each menu item |
-| `name` | varchar | Menu item name |
-| `description` | text | Menu item description |
-| `category` | varchar | Food category such as Malay Food, Chinese Food, or Western Food |
-| `price` | double | Menu item price in RM |
-| `availability` | varchar | Availability status, usually Available or Unavailable |
-| `image_path` | varchar | Relative path to the uploaded menu image |
+| Column         | Type    | Purpose                                                         |
+| -------------- | ------- | --------------------------------------------------------------- |
+| `id`           | bigint  | Primary key for each menu item                                  |
+| `name`         | varchar | Menu item name                                                  |
+| `description`  | text    | Menu item description                                           |
+| `category`     | varchar | Food category such as Malay Food, Chinese Food, or Western Food |
+| `price`        | double  | Menu item price in RM                                           |
+| `availability` | varchar | Availability status, usually Available or Unavailable           |
+| `image_path`   | varchar | Relative path to the uploaded menu image                        |
 
 The provided `restaurant_db.sql` file includes sample records so the dashboard has data after import.
 

@@ -14,157 +14,154 @@
           controls.
         </p>
       </div>
-      <div class="topbar-actions">
-        <div class="status-note">
-          Security: Admin Authenticated<br />Device Integration Mode: Active
-          (Local DB)
-        </div>
-        <a class="primary-button" href="/addMenu">Add Item</a>
-      </div>
     </header>
 
     <main class="dashboard-content wide-container">
       <section class="stats-grid">
-      <article class="stat-card accent-gold">
-        <span class="stat-label">Total Specialties</span>
-        <strong th:text="${totalSpecialties}">0</strong>
-        <span class="stat-caption">Items in master catalog</span>
-      </article>
-      <article class="stat-card accent-green">
-        <span class="stat-label">Active &amp; Available</span>
-        <strong th:text="${availableCount}">0</strong>
-        <span class="stat-caption">Ready for patrons to order</span>
-      </article>
-      <article class="stat-card accent-red">
-        <span class="stat-label">Kitchen Sold Out</span>
-        <strong th:text="${soldOutCount}">0</strong>
-        <span class="stat-caption">Needs restocking attention</span>
-      </article>
-      <article class="stat-card accent-slate">
-        <span class="stat-label">Archived / Hidden</span>
-        <strong th:text="${archivedCount}">0</strong>
-        <span class="stat-caption">Hidden from digital menu</span>
-      </article>
-      <article class="stat-card accent-blue">
-        <span class="stat-label">Average Menu Price</span>
-        <strong th:text="${'RM' + #numbers.formatDecimal(averagePrice, 1, 2)}"
-          >RM0.00</strong
-        >
-        <span class="stat-caption">Balanced premium average</span>
-      </article>
+        <article class="stat-card accent-gold">
+          <span class="stat-label">Total Specialties</span>
+          <strong th:text="${totalSpecialties}">0</strong>
+          <span class="stat-caption">Items in master catalog</span>
+        </article>
+        <article class="stat-card accent-green">
+          <span class="stat-label">Active &amp; Available</span>
+          <strong th:text="${availableCount}">0</strong>
+          <span class="stat-caption">Ready for patrons to order</span>
+        </article>
+        <article class="stat-card accent-red">
+          <span class="stat-label">Kitchen Sold Out</span>
+          <strong th:text="${soldOutCount}">0</strong>
+          <span class="stat-caption">Needs restocking attention</span>
+        </article>
+
+        <article class="stat-card accent-blue">
+          <span class="stat-label">Average Menu Price</span>
+          <strong th:text="${'RM' + #numbers.formatDecimal(averagePrice, 1, 2)}"
+            >RM0.00</strong
+          >
+          <span class="stat-caption">Balanced premium average</span>
+        </article>
       </section>
 
       <section class="panel control-panel">
-      <form class="filter-row" method="get" th:action="@{/menu}">
-        <div class="search-box">
-          <span>⌕</span>
-          <input
-            type="text"
-            name="keyword"
-            th:value="${keyword}"
-            placeholder="Search "
-          />
-        </div>
+        <form class="filter-row" method="get" th:action="@{/menu}">
+          <div class="search-box">
+            <span>⌕</span>
+            <input
+              type="text"
+              name="keyword"
+              th:value="${keyword}"
+              placeholder="Search "
+            />
+          </div>
 
-        <select name="sort">
-          <option value="popular" th:selected="${selectedSort == 'popular'}">
-            Sort: Most Popular
-          </option>
-          <option
-            value="price-low"
-            th:selected="${selectedSort == 'price-low'}"
-          >
-            Sort: Price Low to High
-          </option>
-          <option
-            value="price-high"
-            th:selected="${selectedSort == 'price-high'}"
-          >
-            Sort: Price High to Low
-          </option>
-        </select>
+          <select name="sort">
+            <option
+              value="price-low"
+              th:selected="${selectedSort == 'price-low'}"
+            >
+              Sort: Price Low to High
+            </option>
+            <option
+              value="price-high"
+              th:selected="${selectedSort == 'price-high'}"
+            >
+              Sort: Price High to Low
+            </option>
+          </select>
 
-        <select name="category">
-          <option value="all" th:selected="${selectedCategory == 'all'}">
-            All Categories
-          </option>
-          <option
+          <select name="category">
+            <option value="all" th:selected="${selectedCategory == 'all'}">
+              All Categories
+            </option>
+            <option
+              th:each="category : ${categories}"
+              th:value="${category}"
+              th:text="${category}"
+              th:selected="${selectedCategory == category}"
+            >
+              Category
+            </option>
+          </select>
+
+          <button class="ghost-button" type="submit">Apply</button>
+          <a class="ghost-button" href="/menu">Clear</a>
+        </form>
+
+        <div class="category-chips">
+          <a
+            class="chip"
+            th:classappend="${selectedCategory == 'all'} ? 'active'"
+            th:href="@{/menu(keyword=${keyword}, sort=${selectedSort})}"
+            >All Categories</a
+          >
+          <a
+            class="chip"
             th:each="category : ${categories}"
-            th:value="${category}"
             th:text="${category}"
-            th:selected="${selectedCategory == category}"
+            th:classappend="${selectedCategory == category} ? 'active'"
+            th:href="@{/menu(keyword=${keyword}, sort=${selectedSort}, category=${category})}"
+            >Category</a
           >
-            Category
-          </option>
-        </select>
-
-        <button class="ghost-button" type="submit">Apply</button>
-        <a class="ghost-button" href="/menu">Clear</a>
-      </form>
-
-      <div class="category-chips">
-        <a
-          class="chip"
-          th:classappend="${selectedCategory == 'all'} ? 'active'"
-          th:href="@{/menu(keyword=${keyword}, sort=${selectedSort})}"
-          >All Categories</a
-        >
-        <a
-          class="chip"
-          th:each="category : ${categories}"
-          th:text="${category}"
-          th:classappend="${selectedCategory == category} ? 'active'"
-          th:href="@{/menu(keyword=${keyword}, sort=${selectedSort}, category=${category})}"
-          >Category</a
-        >
-      </div>
-
-      <div class="catalog-meta">
-        <div>
-          <span class="stat-label">Catalog Match</span>
-          <strong th:text="${catalogMatchCount}">0 items</strong>
         </div>
-        <a class="primary-button" href="/addMenu">Add Menu Item</a>
-      </div>
+
+        <div class="catalog-meta">
+          <div>
+            <span class="stat-label">Catalog Match</span>
+            <strong th:text="${catalogMatchCount}">0 items</strong>
+          </div>
+          <a class="primary-button" href="/addMenu">Add Menu Item</a>
+        </div>
       </section>
     </main>
 
-    <section class="menu-grid wide-container">
-      <article class="menu-card" th:each="menu : ${menuList}">
-        <div class="menu-image-wrap">
-          <img th:src="${menu.imagePath != null && !#strings.isEmpty(menu.imagePath) ? menu.imagePath : '/uploads/placeholder.png'}" th:alt="${menu.name}" />
-          <span
-            class="availability-pill"
-            th:classappend="${#strings.equalsIgnoreCase(menu.availability, 'Unavailable')} ? ' unavailable'"
-            th:text="${menu.availability}"
-            >Available</span
-          >
-        </div>
-
-        <div class="menu-card-body">
-          <div class="menu-headline">
-            <span class="category-tag" th:text="${menu.category}"
-              >Category</span
-            >
-            <strong th:text="${'RM' + #numbers.formatDecimal(menu.price, 1, 2)}"
-              >RM0.00</strong
+    <section class="panel menu-section wide-container">
+      <div class="menu-grid">
+        <article class="menu-card" th:each="menu : ${menuList}">
+          <div class="menu-image-wrap">
+            <img
+              th:src="${menu.imagePath != null && !#strings.isEmpty(menu.imagePath) ? menu.imagePath : '/uploads/placeholder.png'}"
+              th:alt="${menu.name}"
+            />
+            <span
+              class="availability-pill"
+              th:classappend="${#strings.equalsIgnoreCase(menu.availability, 'Unavailable')} ? ' unavailable'"
+              th:text="${menu.availability}"
+              >Available</span
             >
           </div>
-          <h2 th:text="${menu.name}">Menu Item</h2>
-          <p th:text="${menu.description}">Description</p>
 
-          <div class="menu-actions">
-            <a
-              class="ghost-button small"
-              th:href="@{/editMenu/{id}(id=${menu.id})}"
-              >Edit</a
-            >
-            <form th:action="@{/deleteMenu/{id}(id=${menu.id})}" method="post">
-              <button class="danger-button small" type="submit">Delete</button>
-            </form>
+          <div class="menu-card-body">
+            <div class="menu-headline">
+              <span class="category-tag" th:text="${menu.category}"
+                >Category</span
+              >
+              <strong
+                th:text="${'RM' + #numbers.formatDecimal(menu.price, 1, 2)}"
+                >RM0.00</strong
+              >
+            </div>
+            <h2 th:text="${menu.name}">Menu Item</h2>
+            <p th:text="${menu.description}">Description</p>
+
+            <div class="menu-actions">
+              <a
+                class="ghost-button small"
+                th:href="@{/editMenu/{id}(id=${menu.id})}"
+                >Edit</a
+              >
+              <form
+                th:action="@{/deleteMenu/{id}(id=${menu.id})}"
+                method="post"
+              >
+                <button class="danger-button small" type="submit">
+                  Delete
+                </button>
+              </form>
+            </div>
           </div>
-        </div>
-      </article>
+        </article>
+      </div>
     </section>
   </body>
 </html>
