@@ -37,7 +37,14 @@ public class MenuController {
                            @RequestParam(value = "sort", required = false, defaultValue = "popular") String sort,
                            Model model) {
 
-        List<MenuItem> menuList = service.getAllMenu();
+        List<MenuItem> allMenuItems = service.getAllMenu();
+        List<String> categories = allMenuItems.stream()
+                .map(MenuItem::getCategory)
+                .filter(StringUtils::hasText)
+                .distinct()
+                .sorted(String.CASE_INSENSITIVE_ORDER)
+                .collect(Collectors.toList());
+        List<MenuItem> menuList = allMenuItems;
 
         if (StringUtils.hasText(keyword)) {
             String lowerKeyword = keyword.toLowerCase();
@@ -70,6 +77,7 @@ public class MenuController {
                 .orElse(0.0);
 
         model.addAttribute("menuList", menuList);
+        model.addAttribute("categories", categories);
         model.addAttribute("keyword", keyword == null ? "" : keyword);
         model.addAttribute("selectedCategory", category == null ? "all" : category);
         model.addAttribute("selectedSort", sort);

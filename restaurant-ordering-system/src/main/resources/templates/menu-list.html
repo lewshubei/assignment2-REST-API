@@ -5,7 +5,7 @@
     <link rel="stylesheet" th:href="@{/css/app.css}" />
   </head>
   <body class="page-shell dashboard-shell">
-    <header class="topbar">
+    <header class="topbar wide-container">
       <div>
         <div class="eyebrow">Dashboard Control Screen</div>
         <h1>Menu Offerings Operations</h1>
@@ -19,12 +19,12 @@
           Security: Admin Authenticated<br />Device Integration Mode: Active
           (Local DB)
         </div>
-        <a class="ghost-button" href="/menu">Reset View</a>
-        <a class="primary-button" href="/addMenu">Draft Specialty</a>
+        <a class="primary-button" href="/addMenu">Add Item</a>
       </div>
     </header>
 
-    <section class="stats-grid">
+    <main class="dashboard-content wide-container">
+      <section class="stats-grid">
       <article class="stat-card accent-gold">
         <span class="stat-label">Total Specialties</span>
         <strong th:text="${totalSpecialties}">0</strong>
@@ -47,14 +47,14 @@
       </article>
       <article class="stat-card accent-blue">
         <span class="stat-label">Average Menu Price</span>
-        <strong th:text="${'$' + #numbers.formatDecimal(averagePrice, 1, 2)}"
-          >$0.00</strong
+        <strong th:text="${'RM' + #numbers.formatDecimal(averagePrice, 1, 2)}"
+          >RM0.00</strong
         >
         <span class="stat-caption">Balanced premium average</span>
       </article>
-    </section>
+      </section>
 
-    <section class="panel control-panel">
+      <section class="panel control-panel">
       <form class="filter-row" method="get" th:action="@{/menu}">
         <div class="search-box">
           <span>⌕</span>
@@ -62,7 +62,7 @@
             type="text"
             name="keyword"
             th:value="${keyword}"
-            placeholder="Search specialty title or kitchen ingredients..."
+            placeholder="Search "
           />
         </div>
 
@@ -88,44 +88,35 @@
           <option value="all" th:selected="${selectedCategory == 'all'}">
             All Categories
           </option>
-          <option value="Mains" th:selected="${selectedCategory == 'Mains'}">
-            Mains
-          </option>
           <option
-            value="Beverages"
-            th:selected="${selectedCategory == 'Beverages'}"
+            th:each="category : ${categories}"
+            th:value="${category}"
+            th:text="${category}"
+            th:selected="${selectedCategory == category}"
           >
-            Beverages
-          </option>
-          <option
-            value="Desserts"
-            th:selected="${selectedCategory == 'Desserts'}"
-          >
-            Desserts
-          </option>
-          <option
-            value="Appetizers"
-            th:selected="${selectedCategory == 'Appetizers'}"
-          >
-            Appetizers
+            Category
           </option>
         </select>
 
-        <button class="ghost-button" type="submit">Presence Status</button>
+        <button class="ghost-button" type="submit">Apply</button>
         <a class="ghost-button" href="/menu">Clear</a>
       </form>
 
       <div class="category-chips">
-        <a class="chip active" href="/menu">All Categories</a>
-        <a class="chip" href="/menu?category=Appetizers"
-          >Appetizers &amp; Starters</a
+        <a
+          class="chip"
+          th:classappend="${selectedCategory == 'all'} ? 'active'"
+          th:href="@{/menu(keyword=${keyword}, sort=${selectedSort})}"
+          >All Categories</a
         >
-        <a class="chip" href="/menu?category=Mains">Main Courses</a>
-        <a class="chip" href="/menu?category=Chef%27s%20Highlights"
-          >Chef&apos;s Highlights</a
+        <a
+          class="chip"
+          th:each="category : ${categories}"
+          th:text="${category}"
+          th:classappend="${selectedCategory == category} ? 'active'"
+          th:href="@{/menu(keyword=${keyword}, sort=${selectedSort}, category=${category})}"
+          >Category</a
         >
-        <a class="chip" href="/menu?category=Desserts">Desserts &amp; Sweets</a>
-        <a class="chip" href="/menu?category=Beverages">Curated Beverages</a>
       </div>
 
       <div class="catalog-meta">
@@ -135,12 +126,13 @@
         </div>
         <a class="primary-button" href="/addMenu">Add Menu Item</a>
       </div>
-    </section>
+      </section>
+    </main>
 
-    <section class="menu-grid">
+    <section class="menu-grid wide-container">
       <article class="menu-card" th:each="menu : ${menuList}">
         <div class="menu-image-wrap">
-          <img th:src="${menu.imagePath}" th:alt="${menu.name}" />
+          <img th:src="${menu.imagePath != null && !#strings.isEmpty(menu.imagePath) ? menu.imagePath : '/uploads/placeholder.png'}" th:alt="${menu.name}" />
           <span class="availability-pill" th:text="${menu.availability}"
             >Available</span
           >
@@ -151,8 +143,8 @@
             <span class="category-tag" th:text="${menu.category}"
               >Category</span
             >
-            <strong th:text="${'$' + #numbers.formatDecimal(menu.price, 1, 2)}"
-              >$0.00</strong
+            <strong th:text="${'RM' + #numbers.formatDecimal(menu.price, 1, 2)}"
+              >RM0.00</strong
             >
           </div>
           <h2 th:text="${menu.name}">Menu Item</h2>
